@@ -12,6 +12,14 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 To check static-site generation and incremental static regeneration
 
+Build with this command:
+
 ```bash
-yarn build & yarn start
+yarn build
+```
+
+And run the following command:
+
+```bash
+yarn start
 ```
