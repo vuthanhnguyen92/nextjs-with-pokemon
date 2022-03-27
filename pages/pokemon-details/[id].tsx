@@ -21,6 +21,7 @@ const PokemonDetailsPage = ({ pokemon, time }: Props) => {
           name="description"
           content={`Pokemon Details - ${pokemon.name}`}
         />
+        <meta property="og:title" content={pokemon.name} />
       </Head>
 
       <main>
@@ -49,38 +50,7 @@ const PokemonDetailsPage = ({ pokemon, time }: Props) => {
 // };
 
 //Second way
-// export async function getServerSideProps({ params }: any) {
-//   const response = await fetch(
-//     `https://pokeapi.co/api/v2/pokemon/${params.id}`
-//   );
-//   const data = await response.json();
-
-//   return {
-//     props: {
-//       time: new Date().toISOString(),
-//       pokemon: data,
-//     },
-//   };
-// }
-
-//STATIC-SITE GENERATION
-export async function getStaticPaths() {
-  const response = await fetch("https://pokeapi.co/api/v2/pokemon?limit=10");
-  const data = await response.json();
-
-  const paths = data.results.map((pokemon: Pokemon) => {
-    return { params: { id: pokemon.name } };
-  });
-
-  return {
-    paths: paths,
-    //if the requested page is not defined in paths
-    //the page will be generated and returned to the client-side
-    fallback: "blocking",
-  };
-}
-
-export async function getStaticProps({ params }: any) {
+export async function getServerSideProps({ params }: any) {
   const response = await fetch(
     `https://pokeapi.co/api/v2/pokemon/${params.id}`
   );
@@ -90,12 +60,46 @@ export async function getStaticProps({ params }: any) {
     props: {
       time: new Date().toISOString(),
       pokemon: {
-        image: data.sprites.other["official-artwork"].front_default,
         name: data.name,
+        image: data.sprites.other["official-artwork"].front_default,
       },
     },
-    revalidate: 5, //revalidate data after 5 seconds (INCREMENTAL STATIC REGENERATION)
   };
 }
+
+//STATIC-SITE GENERATION
+// export async function getStaticPaths() {
+//   const response = await fetch("https://pokeapi.co/api/v2/pokemon?limit=10");
+//   const data = await response.json();
+
+//   const paths = data.results.map((pokemon: Pokemon) => {
+//     return { params: { id: pokemon.name } };
+//   });
+
+//   return {
+//     paths: paths,
+//     //if the requested page is not defined in paths
+//     //the page will be generated and returned to the client-side
+//     fallback: "blocking",
+//   };
+// }
+
+// export async function getStaticProps({ params }: any) {
+//   const response = await fetch(
+//     `https://pokeapi.co/api/v2/pokemon/${params.id}`
+//   );
+//   const data = await response.json();
+
+//   return {
+//     props: {
+//       time: new Date().toISOString(),
+//       pokemon: {
+//         image: data.sprites.other["official-artwork"].front_default,
+//         name: data.name,
+//       },
+//     },
+//     revalidate: 5, //revalidate data after 5 seconds (INCREMENTAL STATIC REGENERATION)
+//   };
+// }
 
 export default PokemonDetailsPage;
